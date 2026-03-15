@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>未来さんのランニングガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F5F0;
+  --bg2: #EDEAE3;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #A09D97;
+  --green: #1D9E75;
+  --green-light: #E1F5EE;
+  --green-dark: #0F6E56;
+  --amber: #D4920A;
+  --amber-light: #FDF3DC;
+  --amber-dark: #7A5200;
+  --red: #D44E3A;
+  --red-light: #FDECEA;
+  --blue: #2B6CB0;
+  --blue-light: #EBF3FC;
+  --purple: #6B4FA8;
+  --purple-light: #F2EEFB;
+  --teal: #2A8FA0;
+  --teal-light: #E3F5F8;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151512;
+    --bg2: #1E1E1A;
+    --surface: #252520;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #F0EDE6;
+    --text2: #A09D97;
+    --text3: #6B6860;
+    --green-light: #0D3D2C;
+    --amber-light: #3A2800;
+    --red-light: #3D1510;
+    --blue-light: #0F2540;
+    --purple-light: #1E1530;
+    --teal-light: #0A2830;
+  }
+}
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+.site-header h1 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.header-tag {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── NAV ── */
+.main-nav {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.main-nav::-webkit-scrollbar { display: none; }
+.main-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 44px;
+  font-size: 13px;
+  color: var(--text2);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.main-nav a:hover { color: var(--text); }
+.main-nav a.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+.nav-icon { font-size: 14px; }
+
+/* ── LAYOUT ── */
+.container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* ── SECTION SHELL ── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── PAGE TITLE ── */
+.page-title {
+  margin-bottom: 1.75rem;
+}
+.page-title h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.page-title p {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ── METRIC GRID ── */
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 1.75rem; }
+@media (max-width: 600px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.metric .label { font-size: 11px; color: var(--text3); margin-bottom: 4px; letter-spacing: 0.03em; }
+.metric .val { font-size: 24px; font-weight: 700; color: var(--text); font-family: 'DM Mono', monospace; }
+.metric .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card.accent-green { border-left: 3px solid var(--green); }
+.card.accent-amber { border-left: 3px solid var(--amber); }
+.card.accent-blue  { border-left: 3px solid var(--blue); }
+.card.accent-red   { border-left: 3px solid var(--red); }
+.card-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+.card-body { font-size: 13px; color: var(--text2); line-height: 1.75; }
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  margin: 1.75rem 0 0.75rem;
+}
+
+/* ── CHART WRAPPER ── */
+.chart-wrap { position: relative; width: 100%; }
+
+/* ── ZONE BAR ── */
+.zone-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+.zone-row { display: flex; align-items: center; gap: 12px; }
+.zone-name { width: 110px; flex-shrink: 0; font-size: 12px; color: var(--text2); }
+.zone-name span { display: block; font-size: 11px; color: var(--text3); }
+.zone-track { flex: 1; height: 8px; border-radius: 4px; background: var(--bg2); overflow: hidden; }
+.zone-fill { height: 8px; border-radius: 4px; }
+.zone-val { width: 90px; text-align: right; font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+
+/* ── STRETCH LIST ── */
+.stretch-list { display: flex; flex-direction: column; }
+.stretch-item {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.stretch-item:last-child { border-bottom: none; }
+.s-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.s-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.s-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.s-badge {
+  font-size: 11px; padding: 3px 9px;
+  border-radius: 20px; white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+  align-self: start; margin-top: 2px;
+}
+
+/* ── WEEK GRID ── */
+.week-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 6px; margin-bottom: 1rem; }
+.day-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 6px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.day-box.highlight { border-color: var(--amber); }
+.day-name { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+.day-main { font-size: 12px; font-weight: 500; color: var(--text); }
+.day-sub { font-size: 10px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
+
+/* ── TROUBLE GRID ── */
+.trouble-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+@media (max-width: 500px) { .trouble-grid { grid-template-columns: 1fr; } }
+.trouble-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.trouble-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.trouble-body { font-size: 12px; color: var(--text2); line-height: 1.65; }
+
+/* ── TIMELINE ── */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:1px; background:var(--border2); }
+.tl-item { position:relative; margin-bottom:20px; }
+.tl-dot { position:absolute; left:-22px; top:5px; width:10px; height:10px; border-radius:50%; border:2px solid; background:var(--surface); }
+.tl-time { font-size:11px; color:var(--text3); font-family:'DM Mono',monospace; margin-bottom:2px; }
+.tl-title { font-size:14px; font-weight:500; margin-bottom:4px; }
+.tl-body { font-size:13px; color:var(--text2); line-height:1.65; }
+
+/* ── ADVICE CARD ── */
+.advice-list { display:flex; flex-direction:column; gap:10px; }
+
+/* ── PROGRESS BARS ── */
+.prog-list { display:flex; flex-direction:column; gap:10px; }
+.prog-row { display:grid; grid-template-columns:100px 1fr 80px; align-items:center; gap:12px; }
+.prog-label { font-size:12px; color:var(--text2); }
+.prog-track { height:6px; border-radius:3px; background:var(--bg2); overflow:hidden; }
+.prog-fill { height:6px; border-radius:3px; }
+.prog-val { font-size:12px; color:var(--text2); text-align:right; font-family:'DM Mono',monospace; }
+
+/* ── RADAR LEGEND ── */
+.legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:10px; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text2); }
+.legend-dot { width:10px; height:10px; border-radius:2px; }
+
+/* ── FOOTER ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>🏃‍♀️ 未来さんのランニングガイド</h1>
+  <span class="header-tag">45歳・習慣化14ヶ月</span>
+</header>
+
+<nav class="main-nav" id="mainNav">
+  <a href="#" class="active" data-section="stats" onclick="nav(this,'stats')"><span class="nav-icon">📊</span>実績サマリー</a>
+  <a href="#" data-section="monthly" onclick="nav(this,'monthly')"><span class="nav-icon">📅</span>月別推移</a>
+  <a href="#" data-section="hr" onclick="nav(this,'hr')"><span class="nav-icon">❤️</span>心拍・ペース</a>
+  <a href="#" data-section="future" onclick="nav(this,'future')"><span class="nav-icon">🔭</span>10年後比較</a>
+  <a href="#" data-section="balance" onclick="nav(this,'balance')"><span class="nav-icon">⚖️</span>ペースの悩み</a>
+  <a href="#" data-section="interval" onclick="nav(this,'interval')"><span class="nav-icon">⚡</span>インターバル</a>
+  <a href="#" data-section="stretch" onclick="nav(this,'stretch')"><span class="nav-icon">🧘</span>ストレッチ・ケア</a>
+</nav>
+
+<main class="container">
+
+<!-- ══════════════════ 実績サマリー ══════════════════ -->
+<section class="section active" id="stats">
+  <div class="page-title">
+    <h2>実績サマリー</h2>
+    <p>2025年1月〜2026年3月・約14ヶ月のランニング記録</p>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="label">累計走行距離</div><div class="val">1,172</div><div class="sub">km</div></div>
+    <div class="metric"><div class="label">ランニング回数</div><div class="val">234</div><div class="sub">回（月平均17回）</div></div>
+    <div class="metric"><div class="label">平均ペース</div><div class="val">7:23</div><div class="sub">分/km</div></div>
+    <div class="metric"><div class="label">平均心拍数</div><div class="val">151</div><div class="sub">bpm</div></div>
+  </div>
+  <div class="sec-label">月別走行距離の成長</div>
+  <div class="card" style="padding:20px;">
+    <div class="chart-wrap" style="height:220px;"><canvas id="growthChart"></canvas></div>
+  </div>
+  <div class="card accent-green">
+    <div class="card-title" style="color:var(--green-dark);">1月スタート → 9月にピーク150km。年間1,000km達成！</div>
+    <div class="card-body">2km台の短距離から始めて、わずか9ヶ月で月150kmに到達。走行距離・頻度ともに着実に成長しています。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ 月別推移 ══════════════════ -->
+<section class="section" id="monthly">
+  <div class="page-title">
+    <h2>月別推移</h2>
+    <p>走行距離と回数の変化</p>
+  </div>
+  <div class="card" style="padding:20px;">
+    <div class="legend" style="margin-bottom:12px;">
+      <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;"></div>距離(km)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F0B429;"></div>回数</div>
+    </div>
+    <div class="chart-wrap" style="height:260px;"><canvas id="monthlyChart"></canvas></div>
+  </div>
+</section>
+
+<!-- ══════════════════ 心拍・ペース ══════════════════ -->
+<section class="section" id="hr">
+  <div class="page-title">
+    <h2>心拍・ペース分析</h2>
+    <p>ペース帯ごとの心拍ゾーン分布</p>
+  </div>
+  <div class="sec-label">ペース別 心拍ゾーン分布</div>
+  <div class="card" style="padding:20px;">
+    <div class="zone-list">
+      <div class="zone-row">
+        <div class="zone-name">有酸素ゾーン<span>8:00以上/km</span></div>
+        <div class="zone-track"><div class="zone-fill" style="width:62%;background:#1D9E75;"></div></div>
+        <div class="zone-val">62%</div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-name">適正ゾーン<span>7:00〜7:59/km</span></div>
+        <div class="zone-track"><div class="zone-fill" style="width:31%;background:#F0B429;"></div></div>
+        <div class="zone-val">31%</div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-name">高負荷ゾーン<span>7:00未満/km</span></div>
+        <div class="zone-track"><div class="zone-fill" style="width:7%;background:#D44E3A;"></div></div>
+        <div class="zone-val">7%</div>
+      </div>
+    </div>
+  </div>
+  <div class="sec-label">ペース vs 平均心拍（散布図）</div>
+  <div class="card" style="padding:20px;">
+    <div class="legend" style="margin-bottom:12px;">
+      <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;"></div>ゆっくり(8:00+)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F0B429;"></div>適正(7:00-7:59)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#D44E3A;"></div>速め(7:00未満)</div>
+    </div>
+    <div class="chart-wrap" style="height:240px;"><canvas id="hrChart"></canvas></div>
+  </div>
+  <p style="font-size:12px;color:var(--text3);margin-top:6px;">7:00/km未満になると心拍170+が頻発。7:00〜7:30が安定ゾーン。</p>
+</section>
+
+<!-- ══════════════════ 10年後比較 ══════════════════ -->
+<section class="section" id="future">
+  <div class="page-title">
+    <h2>10年後比較</h2>
+    <p>45歳から継続した場合と、一般的な運動不足の55歳との差</p>
+  </div>
+  <div class="card" style="padding:20px;">
+    <div class="legend" style="margin-bottom:12px;">
+      <div class="legend-item"><div class="legend-dot" style="background:#1D9E75;"></div>未来さん（継続）</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#A09D97;"></div>一般的な55歳（運動不足）</div>
+    </div>
+    <div class="chart-wrap" style="height:280px;"><canvas id="futureChart"></canvas></div>
+  </div>
+  <div class="metrics" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+    <div class="metric"><div class="label">VO2maxの差</div><div class="val">+20%</div><div class="sub">有酸素能力が大きく上回る</div></div>
+    <div class="metric"><div class="label">安静時心拍数の差</div><div class="val">-12</div><div class="sub">bpm・心臓が効率よく働く</div></div>
+  </div>
+  <div class="card accent-green">
+    <div class="card-title" style="color:var(--green-dark);">10年続けることで開く差</div>
+    <div class="card-body">心肺持久力・体重管理・骨密度・メンタル健康のすべてで大きな差が生まれます。特に女性は閉経後の骨密度低下をランニングが緩やかにする効果が研究で示されています。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ペースの悩み ══════════════════ -->
+<section class="section" id="balance">
+  <div class="page-title">
+    <h2>距離・ペース・心拍のバランス</h2>
+    <p>「速く長く走りたいのに心拍が上がりすぎる」への答え</p>
+  </div>
+  <div class="advice-list">
+    <div class="card accent-green">
+      <div class="card-title" style="color:var(--green-dark);">理想の黄金バランス（今の未来さんへ）</div>
+      <div class="card-body">ペース <strong>7:00〜7:30/km</strong>・心拍 <strong>140〜160bpm</strong>・距離 <strong>5〜7km</strong> が現在の最適ゾーン。このゾーンが脂肪燃焼効率が最も高く、翌日に疲れが残りにくい組み合わせです。</div>
+    </div>
+    <div class="card accent-amber">
+      <div class="card-title" style="color:var(--amber-dark);">スピードより「ゾーン2」を優先する</div>
+      <div class="card-body">心拍170超は「無酸素ゾーン」に突入しており、有酸素運動の効果が薄れます。距離を伸ばしたければ、むしろペースを落として7:30〜8:00/kmで長く走る方が効果的。ゆっくりに感じるくらいがちょうどいい。</div>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-title" style="color:var(--blue);">時間が短くても「質」で補う方法</div>
+      <div class="card-body">限られた時間なら「1分速く走る→2分ゆっくりの繰り返し（インターバル）」が効果的。週1回だけ取り入れるだけで、心肺能力が向上しペースが自然と上がってきます。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">心拍計算で自分の「ゾーン2」を特定する</div>
+      <div class="card-body">最大心拍数の目安＝220−45歳＝<strong>175bpm</strong>。ゾーン2（有酸素の適正範囲）は最大心拍の60〜70%→ <strong>105〜123bpm</strong>。少しゆっくり目に感じるくらいがちょうどいい。「会話できるくらいのペース」が実践的な目安です。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ インターバル ══════════════════ -->
+<section class="section" id="interval">
+  <div class="page-title">
+    <h2>インターバルトレーニング</h2>
+    <p>週1回だけ取り入れる心肺強化メニュー</p>
+  </div>
+
+  <div class="card accent-green" style="margin-bottom:1.5rem;">
+    <div class="card-title" style="color:var(--green-dark);">インターバルの目的は「ゾーン2を楽にすること」</div>
+    <div class="card-body">週1回だけゾーン4（140〜158bpm）に短時間入ることで心肺機能が向上します。その結果、数週間後には今7:30/kmでゾーン2が、7:00/kmでもゾーン2になる感覚が生まれます。</div>
+  </div>
+
+  <div class="sec-label">心拍ゾーン早見表（45歳・最大心拍175bpm基準）</div>
+  <div class="card" style="padding:20px;">
+    <div class="zone-list">
+      <div class="zone-row"><div class="zone-name">Z1 回復走</div><div class="zone-track"><div class="zone-fill" style="width:30%;background:#9FE1CB;"></div></div><div class="zone-val">〜105bpm</div></div>
+      <div class="zone-row"><div class="zone-name">Z2 有酸素</div><div class="zone-track"><div class="zone-fill" style="width:47%;background:#1D9E75;"></div></div><div class="zone-val">105〜123bpm</div></div>
+      <div class="zone-row"><div class="zone-name">Z3 テンポ走</div><div class="zone-track"><div class="zone-fill" style="width:62%;background:#F0B429;"></div></div><div class="zone-val">123〜140bpm</div></div>
+      <div class="zone-row"><div class="zone-name">Z4 インターバル</div><div class="zone-track"><div class="zone-fill" style="width:80%;background:#E0843C;"></div></div><div class="zone-val">140〜158bpm</div></div>
+      <div class="zone-row"><div class="zone-name">Z5 無酸素</div><div class="zone-track"><div class="zone-fill" style="width:100%;background:#D44E3A;"></div></div><div class="zone-val">158bpm〜</div></div>
+    </div>
+  </div>
+
+  <div class="sec-label">メニューA — 入門インターバル（まずここから）</div>
+  <div class="card" style="padding:20px;">
+    <div class="stretch-list">
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--green-light);">🏁</div>
+        <div><div class="s-name">ウォームアップジョグ</div><div class="s-desc">8:30〜9:00/km でゆっくり。心拍を110〜120に上げる。</div></div>
+        <span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">5分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--amber-light);">⚡</div>
+        <div><div class="s-name">速め走</div><div class="s-desc">6:00〜6:30/km・心拍145〜155を目標に1分間走る。</div></div>
+        <span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">1分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--green-light);">🔄</div>
+        <div><div class="s-name">回復ジョグ</div><div class="s-desc">8:30〜9:00/km で2分。心拍を130以下に戻す。戻らなければ3分に延ばしてOK。</div></div>
+        <span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">2分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--blue-light);">🔁</div>
+        <div><div class="s-name">上記を繰り返す</div><div class="s-desc">「もう1セットいける」くらいで止める。心拍170を超えたら次セットのペースを落とす。</div></div>
+        <span class="s-badge" style="background:var(--blue-light);color:var(--blue);">5〜6セット</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--green-light);">🏁</div>
+        <div><div class="s-name">クールダウン</div><div class="s-desc">ゆっくりジョグ→ストレッチ（走った後タブ参照）</div></div>
+        <span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">5分</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">メニューB — 標準インターバル（4〜6週後に移行）</div>
+  <div class="card" style="padding:20px;">
+    <div class="stretch-list">
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--green-light);">🏁</div>
+        <div><div class="s-name">ウォームアップ</div><div class="s-desc">ゆっくりジョグ＋軽いストレッチ</div></div>
+        <span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">10分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--amber-light);">⚡</div>
+        <div><div class="s-name">400m全力に近い走り</div><div class="s-desc">6:00/km前後。息が上がる程度の強度。</div></div>
+        <span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">約2.5分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--green-light);">🔄</div>
+        <div><div class="s-name">200mゆっくりジョグ</div><div class="s-desc">9:00/km以上でゆっくり。心拍を回復させる。</div></div>
+        <span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">約2〜3分</span>
+      </div>
+      <div class="stretch-item">
+        <div class="s-icon" style="background:var(--blue-light);">🔁</div>
+        <div><div class="s-name">繰り返し</div><div class="s-desc">最初は4セットから。慣れたら6セットまで増やす。</div></div>
+        <span class="s-badge" style="background:var(--blue-light);color:var(--blue);">4〜6セット</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">週間スケジュール例</div>
+  <div class="week-grid">
+    <div class="day-box"><div class="day-name">月</div><div class="day-main" style="color:var(--text3);">休息</div><div class="day-sub">疲れを抜く</div></div>
+    <div class="day-box"><div class="day-name">火</div><div class="day-main" style="color:var(--green);">ゾーン2</div><div class="day-sub">5〜6km<br>7:30〜8:00</div></div>
+    <div class="day-box"><div class="day-name">水</div><div class="day-main" style="color:var(--text3);">軽め</div><div class="day-sub">3km以内</div></div>
+    <div class="day-box highlight"><div class="day-name">木</div><div class="day-main" style="color:var(--amber);">⚡インターバル</div><div class="day-sub">メニューA<br>週1回のみ</div></div>
+    <div class="day-box"><div class="day-name">金</div><div class="day-main" style="color:var(--text3);">休息</div><div class="day-sub">回復優先</div></div>
+    <div class="day-box"><div class="day-name">土</div><div class="day-main" style="color:var(--green);">ロング走</div><div class="day-sub">7〜10km<br>7:30〜8:00</div></div>
+    <div class="day-box"><div class="day-name">日</div><div class="day-main" style="color:var(--green);">ゆっくり</div><div class="day-sub">4〜5km<br>8:00+</div></div>
+  </div>
+
+  <div class="sec-label">3ヶ月進化プラン</div>
+  <div class="card accent-green"><div class="card-title">1ヶ月目 — ゾーン2の基盤を作る</div><div class="card-body">週3〜4回すべて7:30〜8:00/kmでゆっくり走る。心拍を140以下に保つことを最優先。インターバルはまだ不要。ペースを落とすことへの「慣れ」を作る期間。</div></div>
+  <div class="card accent-amber"><div class="card-title">2ヶ月目 — メニューAを週1回追加</div><div class="card-body">ゆっくりジョグ3回 + メニューA週1回。インターバル後の翌日は必ず軽めかお休み。心拍の回復速度が早くなってきたら順調なサイン。</div></div>
+  <div class="card" style="border-left:3px solid #E0843C;"><div class="card-title">3ヶ月目 — メニューBへ移行</div><div class="card-body">距離を使ったインターバルに移行。このころには同じペースでも心拍が5〜10bpm下がっているはず。7:00/kmが「普通」に感じ始めるタイミング。</div></div>
+
+  <div class="sec-label">3ヶ月で期待できる変化</div>
+  <div class="card" style="padding:20px;">
+    <div class="prog-list">
+      <div class="prog-row"><div class="prog-label">平均ペース</div><div class="prog-track"><div class="prog-fill" style="width:75%;background:var(--green);"></div></div><div class="prog-val">7:20→6:50</div></div>
+      <div class="prog-row"><div class="prog-label">同ペースの心拍</div><div class="prog-track"><div class="prog-fill" style="width:60%;background:#5DCAA5;"></div></div><div class="prog-val">-10〜15bpm</div></div>
+      <div class="prog-row"><div class="prog-label">翌日の疲労感</div><div class="prog-track"><div class="prog-fill" style="width:45%;background:#9FE1CB;"></div></div><div class="prog-val">かなり軽減</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ストレッチ・ケア ══════════════════ -->
+<section class="section" id="stretch">
+  <div class="page-title">
+    <h2>ストレッチ・ケア</h2>
+    <p>走る前・後・毎日のケアで疲労をリセット</p>
+  </div>
+
+  <div class="sec-label">走る前 — 動的ストレッチ（5分）</div>
+  <div class="card" style="border-color:var(--green);border-left:3px solid var(--green);margin-bottom:12px;">
+    <div class="card-title" style="color:var(--green-dark);">走る前は「動的ストレッチ」のみ</div>
+    <div class="card-body">筋肉を伸ばして止める「静的ストレッチ」は走る前には逆効果。体を温めながら動かす動的ストレッチが正解。</div>
+  </div>
+  <div class="card" style="padding:20px;">
+    <div class="stretch-list">
+      <div class="stretch-item"><div class="s-icon" style="background:var(--green-light);">🦵</div><div><div class="s-name">足首まわし</div><div class="s-desc">片足を浮かせて足首を内回し・外回し各10回。着地衝撃への準備。</div></div><span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">各10回</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--green-light);">🚶</div><div><div class="s-name">ハイニー（脚上げウォーク）</div><div class="s-desc">歩きながら膝を高く上げる。股関節をほぐして走りのフォームを準備。腸腰筋が温まる。</div></div><span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">10歩×2</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--green-light);">🔄</div><div><div class="s-name">骨盤回し</div><div class="s-desc">両足肩幅、手を腰に当てて骨盤を大きく円を描くように回す。</div></div><span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">各10回</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--green-light);">🏃</div><div><div class="s-name">かかとタッチジョグ</div><div class="s-desc">ゆっくり走りながらかかとをお尻に向けてキック。ハムストリングスと股関節を同時にほぐす。</div></div><span class="s-badge" style="background:var(--green-light);color:var(--green-dark);">20歩</span></div>
+    </div>
+  </div>
+
+  <div class="sec-label">走った後 — 静的ストレッチ（8〜10分）</div>
+  <div class="card" style="border-color:#5DCAA5;border-left:3px solid #5DCAA5;margin-bottom:12px;">
+    <div class="card-title" style="color:var(--green-dark);">走った後こそストレッチのゴールデンタイム</div>
+    <div class="card-body">筋肉が温まった状態でゆっくり伸ばすのが最も効果的。ここをサボると翌日の筋肉痛と疲労感が大きく変わります。</div>
+  </div>
+  <div class="card" style="padding:20px;">
+    <div class="stretch-list">
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">①</div><div><div class="s-name">ふくらはぎ（カーフストレッチ）</div><div class="s-desc">壁に手をつき、片足を後ろに引いて膝を伸ばしたままかかとを床につける。腹痛が出やすい人は特に念入りに。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">30秒×両足</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">②</div><div><div class="s-name">太もも前面（大腿四頭筋）</div><div class="s-desc">片足立ちで足首をつかみかかとをお尻に近づける。壁や柱に手を添えると安定。スピード練習後に特に重要。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">30秒×両足</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">③</div><div><div class="s-name">太もも裏（ハムストリングス）</div><div class="s-desc">片足を前に伸ばして座り、つま先を手でつかむ。届かなければすねに手を当てるだけでOK。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">30秒×両足</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">④</div><div><div class="s-name">股関節・お尻（鳩のポーズ簡易版）</div><div class="s-desc">仰向けで片膝を曲げ、反対の足首をその膝に乗せる。両手で曲げた膝を胸に引き寄せる。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">30秒×両足</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">⑤</div><div><div class="s-name">腸腰筋（ランジストレッチ）</div><div class="s-desc">片膝を床につけた状態で前足に体重を乗せ、骨盤を前に押し出す。心拍が上がりやすい人に特に重要。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">30秒×両足</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--amber-light);">⑥</div><div><div class="s-name">背中・脇腹（側屈ストレッチ）</div><div class="s-desc">立ったまま片手を上げ、反対方向にゆっくり体を倒す。走行中の脇腹痛の予防に効果的。</div></div><span class="s-badge" style="background:var(--amber-light);color:var(--amber-dark);">20秒×両側</span></div>
+    </div>
+  </div>
+
+  <div class="sec-label">毎日のケア</div>
+  <div class="card" style="border-left:3px solid var(--blue);margin-bottom:12px;">
+    <div class="card-title" style="color:var(--blue);">走らない日こそ「回復」が筋肉を育てる</div>
+    <div class="card-body">運動の効果は走っている最中ではなく、休息中に体が修復するときに生まれます。オフ日のケアが翌日の走りの質を決める。</div>
+  </div>
+  <div class="card" style="padding:20px;">
+    <div class="stretch-list">
+      <div class="stretch-item"><div class="s-icon" style="background:var(--blue-light);">🛁</div><div><div class="s-name">入浴（湯船）</div><div class="s-desc">38〜40℃のぬるめのお湯に10〜15分。熱すぎると逆に疲労感が増すので注意。走った日の夜が特に効果的。</div></div><span class="s-badge" style="background:var(--blue-light);color:var(--blue);">10〜15分</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--blue-light);">💧</div><div><div class="s-name">水分補給（起床後すぐ）</div><div class="s-desc">走った後だけでなく翌朝起きた直後にコップ1杯の水。睡眠中に失われた水分が筋肉の回復を妨げる。</div></div><span class="s-badge" style="background:var(--blue-light);color:var(--blue);">起床後すぐ</span></div>
+      <div class="stretch-item"><div class="s-icon" style="background:var(--blue-light);">🧘</div><div><div class="s-name">寝る前2分の足上げ</div><div class="s-desc">仰向けで足を壁に立てかけ脚を90度に上げたまま2分キープ。重力で血液が戻り脚の疲れがリセットされる。寝付きもよくなる。</div></div><span class="s-badge" style="background:var(--blue-light);color:var(--blue);">2分</span></div>
+    </div>
+  </div>
+
+  <div class="sec-label">ログに出てきたお悩み別対処</div>
+  <div class="trouble-grid">
+    <div class="trouble-card" style="border-color:var(--red);"><div class="trouble-title" style="color:var(--red);">走中の腹痛・脇腹痛</div><div class="trouble-body">食後2時間は走らない。走り出しをゆっくりにする。痛くなったら深呼吸しながらペースを落とす。走前の側屈ストレッチが予防に効果的。</div></div>
+    <div class="trouble-card" style="border-color:var(--amber);"><div class="trouble-title" style="color:var(--amber-dark);">翌日の筋肉痛・体の重さ</div><div class="trouble-body">長距離の翌日は回復走（3km以内・超ゆっくり）か完全休息。湯船＋ストレッチ⑤をその日の夜に実施。</div></div>
+    <div class="trouble-card" style="border-color:var(--blue);"><div class="trouble-title" style="color:var(--blue);">病み上がりの心拍高め</div><div class="trouble-body">体調回復後3日間は距離・ペースを通常の6割に。心拍が普段より10bpm以上高い日は走るのをやめる勇気も大事。</div></div>
+    <div class="trouble-card" style="border-color:var(--green);"><div class="trouble-title" style="color:var(--green-dark);">寒い日に息が痛い</div><div class="trouble-body">ネックウォーマーを口元まで上げて走る。鼻から吸って口から吐くを意識。最初の500mは特にゆっくり入る。</div></div>
+    <div class="trouble-card"><div class="trouble-title">体が重い日のモチベーション</div><div class="trouble-body">「走らない選択」も立派なケア。体が重い日は無理すると逆効果。3分だけ外に出て、気乗りしなければ帰っていい。</div></div>
+    <div class="trouble-card" style="border-color:var(--purple);"><div class="trouble-title" style="color:var(--purple);">新しいシューズのトラブル</div><div class="trouble-body">新シューズは最初5km以内の短いランで慣らす。クッション性が変わると着地衝撃が変化し膝・かかとに影響が出やすい。</div></div>
+  </div>
+
+  <div class="sec-label">走る日の理想タイムライン</div>
+  <div class="card" style="padding:20px;">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="border-color:var(--green);background:var(--green);"></div><div class="tl-time">起床直後</div><div class="tl-title">水を1杯 + 軽食（任意）</div><div class="tl-body">空腹で走ると低血糖になりやすい。バナナ半分やゼリー飲料など消化が早いものだけでOK。</div></div>
+      <div class="tl-item"><div class="tl-dot" style="border-color:var(--green);background:var(--green);"></div><div class="tl-time">出発前5分</div><div class="tl-title">動的ストレッチ</div><div class="tl-body">足首・股関節・骨盤回し。5分で十分。外に出てからウォームアップジョグを兼ねてもOK。</div></div>
+      <div class="tl-item"><div class="tl-dot" style="border-color:var(--amber);background:var(--amber);"></div><div class="tl-time">最初の2分</div><div class="tl-title">ウォームアップジョグ</div><div class="tl-body">8:30〜9:00/km の超ゆっくりペース。心拍110〜120くらいに上がってきたら本来のペースへ。</div></div>
+      <div class="tl-item"><div class="tl-dot" style="border-color:var(--amber);background:var(--amber);"></div><div class="tl-time">本走</div><div class="tl-title">目標ペースで走る</div><div class="tl-body">通常は7:30〜8:00/kmでゾーン2を維持。インターバルの日はメニューAまたはBを実施。</div></div>
+      <div class="tl-item"><div class="tl-dot" style="border-color:#E0843C;background:#E0843C;"></div><div class="tl-time">終了前2分</div><div class="tl-title">クールダウンジョグ</div><div class="tl-body">急に止まらずゆっくりジョグで心拍を130以下に下げてから止まる。急停止は頭がくらっとする原因に。</div></div>
+      <div class="tl-item"><div class="tl-dot" style="border-color:var(--red);background:var(--red);"></div><div class="tl-time">帰宅後すぐ</div><div class="tl-title">静的ストレッチ①〜⑥</div><div class="tl-body">体が温かいうちに8〜10分。シャワーの前に実施するのがおすすめ。</div></div>
+      <div class="tl-item" style="margin-bottom:0;"><div class="tl-dot" style="border-color:var(--text3);background:var(--text3);"></div><div class="tl-time">当日夜</div><div class="tl-title">湯船 + 寝る前の足上げ</div><div class="tl-body">38〜40℃で10〜15分。就寝前に2分の足上げ。翌朝の疲労感がかなり変わる。</div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  未来さんのランニングガイド — 2025.01〜2026.03 データより作成
+</footer>
+
+<script>
+function nav(el, sec) {
+  event.preventDefault();
+  document.querySelectorAll('.main-nav a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(sec).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+const monthLabels = ['25/1','25/2','25/3','25/4','25/5','25/6','25/7','25/8','25/9','25/10','25/11','25/12','26/1','26/2','26/3'];
+const monthDist   = [41,53,55,48,58,57,80,104,150,120,141,106,32,102,26];
+const monthCount  = [17,21,14,12,15,17,18,21,18,16,21,16,6,17,5];
+
+new Chart(document.getElementById('growthChart'), {
+  type: 'bar',
+  data: {
+    labels: monthLabels,
+    datasets: [{
+      data: monthDist,
+      backgroundColor: monthDist.map(v => v>=100?'#1D9E75':v>=70?'#5DCAA5':'#9FE1CB'),
+      borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: {display:false}, tooltip: { callbacks: { label: ctx => ctx.raw + ' km' } } },
+    scales: {
+      x: { ticks: {font:{size:11},autoSkip:false,maxRotation:0}, grid:{display:false} },
+      y: { ticks: {font:{size:11},callback:v=>v+'km'}, grid:{color:'rgba(128,128,128,0.08)'} }
+    }
+  }
+});
+
+new Chart(document.getElementById('monthlyChart'), {
+  type: 'bar',
+  data: {
+    labels: monthLabels,
+    datasets: [
+      { label:'距離(km)', data:monthDist, backgroundColor:'#1D9E75', borderRadius:3, yAxisID:'y' },
+      { label:'回数', data:monthCount, type:'line', borderColor:'#F0B429', backgroundColor:'#F0B42930', tension:0.4, yAxisID:'y2', pointRadius:3, pointBackgroundColor:'#F0B429' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{display:false} },
+    scales: {
+      x: { ticks:{font:{size:11},autoSkip:false,maxRotation:0}, grid:{display:false} },
+      y: { position:'left', ticks:{font:{size:11},callback:v=>v+'km'}, grid:{color:'rgba(128,128,128,0.08)'} },
+      y2: { position:'right', max:30, ticks:{font:{size:11},callback:v=>v+'回'}, grid:{display:false} }
+    }
+  }
+});
+
+new Chart(document.getElementById('hrChart'), {
+  type: 'scatter',
+  data: {
+    datasets: [
+      { label:'ゆっくり(8:00+)', data:[{x:8.5,y:143},{x:8.1,y:145},{x:8.3,y:137},{x:8.2,y:151},{x:9.1,y:134}], backgroundColor:'#1D9E7580', pointRadius:6 },
+      { label:'適正(7:00-7:59)', data:[{x:7.1,y:154},{x:7.3,y:150},{x:7.5,y:163},{x:7.4,y:164},{x:7.2,y:148},{x:7.6,y:155},{x:7.8,y:152},{x:7.4,y:165}], backgroundColor:'#F0B42980', pointRadius:6 },
+      { label:'速め(7:00未満)', data:[{x:6.5,y:166},{x:6.3,y:170},{x:6.7,y:162},{x:6.4,y:175},{x:6.5,y:181}], backgroundColor:'#D44E3A80', pointRadius:6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{display:false} },
+    scales: {
+      x: { title:{display:true,text:'ペース (分/km)',font:{size:11}}, reverse:true, min:6, max:10, ticks:{font:{size:11},callback:v=>v+':00'} },
+      y: { title:{display:true,text:'平均心拍 (bpm)',font:{size:11}}, min:120, max:190, ticks:{font:{size:11}},
+           grid:{color:ctx=>ctx.tick.value===170?'rgba(212,78,58,0.3)':'rgba(128,128,128,0.08)'} }
+    }
+  }
+});
+
+new Chart(document.getElementById('futureChart'), {
+  type: 'radar',
+  data: {
+    labels: ['心肺持久力','体重管理','VO2max','安静時心拍','骨密度','メンタル健康'],
+    datasets: [
+      { label:'未来さん（継続）', data:[88,82,85,90,80,92], borderColor:'#1D9E75', backgroundColor:'#1D9E7518', pointBackgroundColor:'#1D9E75', borderWidth:2 },
+      { label:'一般的な55歳（運動不足）', data:[55,58,50,58,55,60], borderColor:'#A09D97', backgroundColor:'#A09D9718', pointBackgroundColor:'#A09D97', borderWidth:2 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{display:false} },
+    scales: { r: { min:0, max:100, ticks:{display:false}, pointLabels:{font:{size:12}}, grid:{color:'rgba(128,128,128,0.12)'} } }
+  }
+});
+</script>
+</body>
+</html>
