@@ -273,6 +273,25 @@ body {
 .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text2); }
 .legend-dot { width:10px; height:10px; border-radius:2px; }
 
+/* ── NUTRITION ── */
+.nutrient-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1rem;}
+@media(max-width:500px){.nutrient-grid{grid-template-columns:repeat(2,1fr);}}
+.nutrient-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);}
+.nutrient-label{font-size:11px;color:var(--text3);margin:0 0 3px;}
+.nutrient-val{font-size:15px;font-weight:500;color:var(--text);margin:0;}
+.nutrient-sub{font-size:11px;color:var(--text3);margin:2px 0 0;}
+.food-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+@media(max-width:500px){.food-grid{grid-template-columns:1fr;}}
+.food-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow);}
+.food-title{font-size:13px;font-weight:500;margin:0 0 6px;}
+.food-body{font-size:12px;color:var(--text2);line-height:1.65;margin:0;}
+.meal-row{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:11px 0;border-bottom:1px solid var(--border);}
+.meal-row:last-child{border-bottom:none;}
+.meal-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.meal-name{font-size:13px;font-weight:500;color:var(--text);margin:0 0 3px;}
+.meal-desc{font-size:12px;color:var(--text2);line-height:1.6;margin:0;}
+.n-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:4px;margin-top:4px;}
+
 /* ── FOOTER ── */
 .site-footer {
   border-top: 1px solid var(--border);
@@ -298,6 +317,7 @@ body {
   <a href="#" data-section="balance" onclick="nav(this,'balance')"><span class="nav-icon">⚖️</span>ペースの悩み</a>
   <a href="#" data-section="interval" onclick="nav(this,'interval')"><span class="nav-icon">⚡</span>インターバル</a>
   <a href="#" data-section="stretch" onclick="nav(this,'stretch')"><span class="nav-icon">🧘</span>ストレッチ・ケア</a>
+  <a href="#" data-section="nutrition" onclick="nav(this,'nutrition')"><span class="nav-icon">🥗</span>食事・栄養</a>
 </nav>
 
 <main class="container">
@@ -603,6 +623,124 @@ body {
       <div class="tl-item"><div class="tl-dot" style="border-color:var(--red);background:var(--red);"></div><div class="tl-time">帰宅後すぐ</div><div class="tl-title">静的ストレッチ①〜⑥</div><div class="tl-body">体が温かいうちに8〜10分。シャワーの前に実施するのがおすすめ。</div></div>
       <div class="tl-item" style="margin-bottom:0;"><div class="tl-dot" style="border-color:var(--text3);background:var(--text3);"></div><div class="tl-time">当日夜</div><div class="tl-title">湯船 + 寝る前の足上げ</div><div class="tl-body">38〜40℃で10〜15分。就寝前に2分の足上げ。翌朝の疲労感がかなり変わる。</div></div>
     </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════ 食事・栄養 ══════════════════ -->
+<section class="section" id="nutrition">
+  <div class="page-title">
+    <h2>食事・栄養</h2>
+    <p>「何を食べるか」より「いつ食べるか」がランナーの回復を決める</p>
+  </div>
+
+  <div class="card accent-green">
+    <div class="card-title" style="color:var(--green-dark);">ランナーの栄養は「補給」より「回復」が主役</div>
+    <div class="card-body">走ること自体よりも、走った後にいかに筋肉・エネルギーを回復させるかが翌日のパフォーマンスを決めます。特に45歳以降は回復速度が落ちるので、食事の質が20代より重要になります。</div>
+  </div>
+
+  <div class="sec-label">3大栄養素の役割（ランナー視点）</div>
+  <div class="nutrient-grid">
+    <div class="nutrient-card"><div class="nutrient-label">炭水化物</div><div class="nutrient-val">エネルギー源</div><div class="nutrient-sub">走る燃料。減らしすぎ厳禁。</div></div>
+    <div class="nutrient-card"><div class="nutrient-label">タンパク質</div><div class="nutrient-val">筋肉の修復</div><div class="nutrient-sub">走後30分以内が黄金タイム。</div></div>
+    <div class="nutrient-card"><div class="nutrient-label">脂質</div><div class="nutrient-val">持久力の燃料</div><div class="nutrient-sub">ゾーン2走行中の主エネルギー。</div></div>
+  </div>
+
+  <div class="card accent-amber">
+    <div class="card-title" style="color:var(--amber-dark);">45歳女性ランナーが特に意識したい栄養素</div>
+    <div class="card-body">
+      <span class="n-badge" style="background:var(--amber-light);color:var(--amber-dark);">鉄分</span>女性は生理で失われやすく、不足すると心拍が上がりやすくなる原因に。<br>
+      <span class="n-badge" style="background:var(--green-light);color:var(--green-dark);">カルシウム・VitD</span>閉経前後の骨密度低下をランニングと合わせて予防。<br>
+      <span class="n-badge" style="background:var(--blue-light);color:var(--blue);">マグネシウム</span>筋肉のけいれん・こむら返り防止。発汗で失われやすい。
+    </div>
+  </div>
+
+  <div class="sec-label">食べるタイミング</div>
+  <div class="card" style="padding:20px;">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--green);background:var(--green);"></div>
+        <div class="tl-time">走る2時間前まで</div>
+        <div class="tl-title">しっかり食事OK</div>
+        <div class="tl-body">ご飯・パン・うどんなど消化しやすい炭水化物メインで。脂質・食物繊維が多いものは腹痛の原因になるので少なめに。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--amber);background:var(--amber);"></div>
+        <div class="tl-time">走る30〜60分前</div>
+        <div class="tl-title">軽い補給なら可</div>
+        <div class="tl-body">バナナ半分・小さなおにぎり1個・ゼリー飲料など。空腹すぎる場合のみ。固形物は少量に。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:#E0843C;background:#E0843C;"></div>
+        <div class="tl-time">走った直後〜30分以内 ★最重要</div>
+        <div class="tl-title">タンパク質 + 炭水化物をセットで</div>
+        <div class="tl-body">筋肉の修復が最も活発になる「ゴールデンタイム」。豆乳・ゆで卵＋バナナなど。30分を過ぎると効果が半減。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--blue);background:var(--blue);"></div>
+        <div class="tl-time">走った後2時間以内</div>
+        <div class="tl-title">しっかり食事で回復を完結させる</div>
+        <div class="tl-body">主食＋タンパク質（肉・魚・卵・豆腐）＋緑黄色野菜のバランス食。この食事が翌日の疲労感を決める。</div>
+      </div>
+      <div class="tl-item" style="margin-bottom:0;">
+        <div class="tl-dot" style="border-color:var(--text3);background:var(--text3);"></div>
+        <div class="tl-time">就寝1〜2時間前</div>
+        <div class="tl-title">カゼインタンパク質が有効</div>
+        <div class="tl-body">ギリシャヨーグルト・牛乳・チーズなど。就寝中にゆっくり吸収され、睡眠中の筋肉修復を助ける。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">積極的にとりたい食材</div>
+  <div class="food-grid">
+    <div class="food-card" style="border-color:var(--green);"><div class="food-title" style="color:var(--green-dark);">炭水化物（燃料）</div><div class="food-body">玄米・オートミール・さつまいも・バナナ・うどん。白米より食物繊維が多いものを選ぶと血糖値が安定しやすい。</div></div>
+    <div class="food-card" style="border-color:var(--blue);"><div class="food-title" style="color:var(--blue);">タンパク質（修復）</div><div class="food-body">鶏むね肉・サーモン・卵・豆腐・納豆・ギリシャヨーグルト。走後30分以内に20〜25g目標。</div></div>
+    <div class="food-card" style="border-color:var(--amber);"><div class="food-title" style="color:var(--amber-dark);">鉄分（心拍安定）</div><div class="food-body">レバー・あさり・ほうれん草・小松菜・豆腐。ビタミンCと一緒に食べると吸収率アップ。コーヒーと同時はNG。</div></div>
+    <div class="food-card" style="border-color:var(--purple);"><div class="food-title" style="color:var(--purple);">抗酸化（回復促進）</div><div class="food-body">ブルーベリー・トマト・ブロッコリー・ナッツ類。運動による酸化ストレスを軽減し筋肉痛の回復を早める。</div></div>
+    <div class="food-card"><div class="food-title">カルシウム・VitD（骨密度）</div><div class="food-body">牛乳・小魚・チーズ・豆乳。日光に当たりながら走ること自体もVitD合成に効果的。</div></div>
+    <div class="food-card" style="border-color:var(--teal);"><div class="food-title" style="color:var(--teal);">水分・電解質</div><div class="food-body">5km以下なら水だけでOK。7km超・夏・インターバル後はスポーツドリンクか塩分補給も。起床直後の水1杯は必須。</div></div>
+  </div>
+
+  <div class="sec-label">走る前後に避けたいもの</div>
+  <div class="card">
+    <div class="card-body">
+      <span class="n-badge" style="background:var(--red-light);color:var(--red);">走直前の高脂質</span>揚げ物・バター多めのもの → 消化が遅く腹痛の原因に<br>
+      <span class="n-badge" style="background:var(--red-light);color:var(--red);">走直前の高食物繊維</span>生野菜大量・豆類 → 腸を刺激して腹痛になりやすい<br>
+      <span class="n-badge" style="background:var(--red-light);color:var(--red);">走後のアルコール</span>筋肉修復を妨げる・脱水を悪化させる<br>
+      <span class="n-badge" style="background:var(--amber-light);color:var(--amber-dark);">鉄分食品とコーヒー同時</span>タンニンが鉄の吸収を阻害する
+    </div>
+  </div>
+
+  <div class="sec-label">朝ラン・ランチラン別の1日食事例</div>
+  <div class="card" style="border-left:3px solid var(--green);margin-bottom:12px;">
+    <div class="card-title" style="color:var(--green-dark);">朝ランの日</div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--green-light);">🌅</div><div><div class="meal-name">起床直後</div><div class="meal-desc">水1杯。バナナ半分（空腹なら）。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--amber-light);">🏃</div><div><div class="meal-name">走後すぐ（30分以内）</div><div class="meal-desc">豆乳1杯 or ゆで卵1個＋小さなおにぎり。タンパク質20g以上を意識。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--blue-light);">🍳</div><div><div class="meal-name">朝食（走後1〜2時間）</div><div class="meal-desc">ご飯＋焼き魚 or 卵料理＋味噌汁＋緑黄色野菜。しっかり食べる。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--green-light);">🍱</div><div><div class="meal-name">昼食</div><div class="meal-desc">普通に食べてOK。鉄分を意識してほうれん草・豆腐などを加えると◎。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--purple-light);">🌙</div><div><div class="meal-name">夕食・就寝前</div><div class="meal-desc">夕食は普通に。寝る1〜2時間前にギリシャヨーグルトか牛乳を少し。</div></div></div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--blue);">
+    <div class="card-title" style="color:var(--blue);">ランチランの日（隙間時間に走るパターン）</div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--green-light);">🌅</div><div><div class="meal-name">朝食</div><div class="meal-desc">しっかり食べておく。オートミール or ご飯＋タンパク質。これが走る燃料になる。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--amber-light);">⚡</div><div><div class="meal-name">走る30分前（10〜11時ごろ）</div><div class="meal-desc">お腹が空いていればバナナ1本 or ゼリー飲料。なければ不要。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--amber-light);">🏃</div><div><div class="meal-name">走後すぐ</div><div class="meal-desc">プロテイン飲料 or コンビニのサラダチキン＋おにぎり。移動中でも食べられるものでOK。</div></div></div>
+    <div class="meal-row"><div class="meal-icon" style="background:var(--blue-light);">🍽️</div><div><div class="meal-name">昼食（走後1時間以内）</div><div class="meal-desc">定食スタイルでしっかり食べる。主食＋タンパク質＋野菜を意識。</div></div></div>
+  </div>
+
+  <div class="sec-label">ログに出てきたお悩みと栄養の関係</div>
+  <div class="food-grid">
+    <div class="food-card" style="border-color:var(--red);"><div class="food-title" style="color:var(--red);">走中の腹痛が多い</div><div class="food-body">走る2時間前までに食事を終える。脂質・食物繊維・乳製品を走前に多くとらない。走前のコーヒーも刺激になる場合あり。</div></div>
+    <div class="food-card" style="border-color:var(--amber);"><div class="food-title" style="color:var(--amber-dark);">心拍がすぐ上がる</div><div class="food-body">鉄分不足が原因のひとつ。あさり・ほうれん草・レバーを週2〜3回意識してとる。コーヒーは鉄分食品の直後は避ける。</div></div>
+    <div class="food-card" style="border-color:var(--blue);"><div class="food-title" style="color:var(--blue);">体が重い・疲れが抜けない</div><div class="food-body">走後のタンパク質補給が足りていない可能性。走後30分以内に意識的にとる。糖質が少なすぎてもエネルギー不足で重くなる。</div></div>
+    <div class="food-card"><div class="food-title">暑い日にバテやすい</div><div class="food-body">水分だけでなく「塩分＋カリウム」が必要。梅干し・塩タブレット・バナナが手軽。夏の長距離後はスポーツドリンクも。</div></div>
+    <div class="food-card" style="border-color:var(--purple);"><div class="food-title" style="color:var(--purple);">筋肉痛が長引く</div><div class="food-body">タンパク質＋ビタミンCの組み合わせが回復を早める。キウイ・ブロッコリー＋鶏肉の組み合わせが特におすすめ。</div></div>
+    <div class="food-card" style="border-color:var(--green);"><div class="food-title" style="color:var(--green-dark);">体重が気になる</div><div class="food-body">走後はタンパク質を先にとることで食べ過ぎを防ぎやすくなる。極端な食事制限はNG。筋肉が落ちてペースが下がる原因に。</div></div>
+  </div>
+
+  <div class="card accent-green" style="margin-top:1rem;">
+    <div class="card-title" style="color:var(--green-dark);">サプリメントについて</div>
+    <div class="card-body">基本は食事から。どうしても食事で補いにくいなら鉄分・VitD・マグネシウムのサプリを検討する価値あり。プロテインは走後の補給が食事で間に合わないときの補助として使うのが現実的です。</div>
   </div>
 </section>
 
